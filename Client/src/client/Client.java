@@ -21,7 +21,6 @@ public class Client {
 			while(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length<2){
 				Toolkit.getDefaultToolkit().beep();
 			}
-//			System.out.println(GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length);
 		}
    }
 }

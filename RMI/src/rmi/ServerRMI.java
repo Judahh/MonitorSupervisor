@@ -12,7 +12,7 @@ import java.rmi.RemoteException;
  * @author JH
  */
 public interface ServerRMI extends Remote{
-   public boolean login(String username, int number, int currentNumber) throws RemoteException;
+   public boolean login(String username, int number, int currentNumber, String address) throws RemoteException;
    public boolean logoff(String username, String password) throws RemoteException;
    public boolean register(String username, String password) throws RemoteException;
    
