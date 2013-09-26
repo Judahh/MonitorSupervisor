@@ -4,6 +4,7 @@
  */
 package server;
 
+import database.Database;
 import java.rmi.AccessException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
@@ -39,6 +40,7 @@ public class Server extends UnicastRemoteObject implements ServerRMI {
       try {
          this.name = name;
          this.mainWindow = mainWindow;
+         this.database = new Database();
          //Exporta o objeto remoto  
          this.rmi = (ServerRMI) UnicastRemoteObject
                  .exportObject(this, 0);
@@ -62,11 +64,11 @@ public class Server extends UnicastRemoteObject implements ServerRMI {
          connection = DriverManager.getConnection(database.url());
          statement = connection.createStatement();
          System.out.println(username);
-         String query = "select * from login where user_id='" + username + "' and (logged is null or logged is NULL or logged=0 or logged='');";//TODO: colocar se é deste server (chave extrangeira)
+         String query = "select * from clientTable where name='" + username + "' and (address is null or address is NULL or address=0 or address='') and serverName='" + this.name + "'";
          System.out.println(query);
          resultSet = statement.executeQuery(query);
          if (resultSet.next()) {
-            query = "UPDATE `RTPhoneDatabase`.`login` SET `logged`='" + address + "' WHERE `user_id`='" + username + "'";//TODO: colocar se é deste server (chave extrangeira)
+            query = "UPDATE clientTable SET `address`='" + address + "' and `number`='" + number + "' and `currentNumber`='" + currentNumber + "' WHERE `name`='" + username + "'";
             System.out.println(query);
             statement.executeUpdate(query);
             mainWindow.setElement(username, number, currentNumber);
@@ -79,18 +81,17 @@ public class Server extends UnicastRemoteObject implements ServerRMI {
    }
 
    @Override
-   public boolean logoff(String username, String password) throws RemoteException {
+   public boolean logoff(String username) throws RemoteException {
       try {
          Class.forName("com.mysql.jdbc.Driver");
          connection = DriverManager.getConnection(database.url());
          statement = connection.createStatement();
          System.out.println(username);
-         System.out.println(password);
-         String query = "select * from login where user_id='" + username + "' and password='" + password + "' and !(logged is null or logged is NULL or logged=0 or logged='');";//TODO: colocar se é deste server (chave extrangeira)
+         String query = "select * from clientTable where name='" + username + "' and !(address is null or address is NULL or address=0 or address='')";
          System.out.println(query);
          resultSet = statement.executeQuery(query);
          if (resultSet.next()) {
-            query = "UPDATE `RTPhoneDatabase`.`login` SET `logged`=null WHERE `user_id`='" + username + "'";//TODO: colocar se é deste server (chave extrangeira)
+             query = "UPDATE clientTable SET `address`=null WHERE `name`='" + username + "'";
             System.out.println(query);
             statement.executeUpdate(query);
             mainWindow.logoffElement(username);    
@@ -103,19 +104,19 @@ public class Server extends UnicastRemoteObject implements ServerRMI {
    }
 
    @Override
-   public boolean register(String username, String password) throws RemoteException {
+   public boolean register(String username, int number, int currentNumber) throws RemoteException {
        try {
          Class.forName("com.mysql.jdbc.Driver");
          connection = DriverManager.getConnection(database.url());
          statement = connection.createStatement();
          System.out.println(username);
-         System.out.println(password);
-         String query = "select * from login where user_id='" + username + "';";//TODO: colocar se é deste server (chave extrangeira)
+         String query = "select * from clientTable where name='" + username + "'";
          resultSet = statement.executeQuery(query);
          if (resultSet.next()) {
             return false;
          } else {
-            query = "INSERT INTO `RTPhoneDatabase`.`login` (`user_id`, `password`) VALUES ('" + username + "', '" + password + "');";//TODO: colocar se é deste server (chave extrangeira)
+             
+            query = "INSERT INTO clientTable (`name`, `number`, `currentNumber`, `serverName`) VALUES ('" + username + "', '" + number + "', '" + currentNumber + "', '" + name + "');";//TODO: colocar se é deste server (chave extrangeira)
             System.out.println(query);
             statement.executeUpdate(query);
             mainWindow.registerElement(username);
@@ -128,23 +129,27 @@ public class Server extends UnicastRemoteObject implements ServerRMI {
    }
 
    @Override
-   public boolean resetClient(String oldUsername, String username, int number, int currentNumber) throws RemoteException {
-      throw new UnsupportedOperationException("Not supported yet.");
-   }
-
-   @Override
-   public boolean setClient(String username, int number, int currentNumber) throws RemoteException {
-      throw new UnsupportedOperationException("Not supported yet.");
-   }
-
-   @Override
-   public boolean setNumber(String username, int number) throws RemoteException {
-      throw new UnsupportedOperationException("Not supported yet.");
-   }
-
-   @Override
-   public boolean setCurrentNumber(String username, int currentNumber) throws RemoteException {
-      throw new UnsupportedOperationException("Not supported yet.");
+   public boolean resetClient(String oldUsername, String username, int number, int currentNumber, String nameServer) throws RemoteException {
+      try {
+         Class.forName("com.mysql.jdbc.Driver");
+         connection = DriverManager.getConnection(database.url());
+         statement = connection.createStatement();
+         System.out.println(username);
+         String query = "select * from clientTable where name='" + oldUsername + "'";
+         resultSet = statement.executeQuery(query);
+         if (resultSet.next()) {
+            return false;
+         } else {
+            query = "UPDATE clientTable SET `name`='" + username + "', `number`='" + number + "', `currentNumber`='" + currentNumber + "', `nameServer`='" + nameServer + "' WHERE `name`='" + oldUsername + "'";
+            System.out.println(query);
+            statement.executeUpdate(query);
+            mainWindow.registerElement(username);
+            return true;
+         }
+      } catch (Exception e) {
+         System.out.println(e);
+      }
+      return false;
    }
 
    @Override
@@ -154,11 +159,11 @@ public class Server extends UnicastRemoteObject implements ServerRMI {
          connection = DriverManager.getConnection(database.url());
          statement = connection.createStatement();
          System.out.println(username);
-         String query = "select * from login where user_id='" + username + "' and !(logged is null or logged is NULL or logged=0 or logged='');";//TODO: colocar se é deste server (chave extrangeira)
+         String query = "select * from clientTable where name='" + username + "' and !(address is null or address is NULL or address=0 or address='') and serverName='" + this.name + "'";
          System.out.println(query);
          resultSet = statement.executeQuery(query);
          if (resultSet.next()) {
-            query = "UPDATE `RTPhoneDatabase`.`login` SET `currentNumber`='" + currentNumber + "' WHERE `user_id`='" + username + "'";//TODO: colocar se é deste server (chave extrangeira)
+            query = "UPDATE clientTable SET `currentNumber`='" + currentNumber + "' WHERE `name`='" + username + "'";//TODO: colocar se é deste server (chave extrangeira)
             System.out.println(query);
             statement.executeUpdate(query);
             mainWindow.refreshElement(username, currentNumber);

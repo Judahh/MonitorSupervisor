@@ -6,3 +6,7 @@
 /Database/dist/
 /RMI/dist/
 /RMI/build/
+/Client/build/
+/Client/dist/
+/Server/build/
+/Server/dist/

@@ -25,6 +25,9 @@ public class Database {
    private String serverTable = "serverTable";
    private String clientTable = "clientTable";
 
+    public Database() {
+    }
+
    public String getServerTable() {
       return serverTable;
    }

@@ -4,9 +4,16 @@
  */
 package view;
 
+import database.Database;
 import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import rmi.ServerRMI;
@@ -16,13 +23,18 @@ import rmi.ServerRMI;
  * @author JH
  */
 public class ConnectToServerWindow extends javax.swing.JFrame {
-   private ServerRMI rmi;
-
+   private ServerRMI serverRMI;
+   private Database database;
+   private Connection connection = null;
+   private Statement statement = null;
+   private ResultSet resultSet = null;
+    private LoginWindow loginWindow;
    /**
     * Creates new form ConnectToServerWindow
     */
    public ConnectToServerWindow() {
       initComponents();
+      this.database=new Database();
    }
 
    /**
@@ -85,8 +97,11 @@ public class ConnectToServerWindow extends javax.swing.JFrame {
    private void jButtonConnectActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConnectActionPerformed
       try {
          Registry registry = LocateRegistry.getRegistry(getServerAddress(), 9000);
-         rmi = (ServerRMI) registry.lookup("RTPhoneServer");
-
+         serverRMI = (ServerRMI) registry.lookup("ServerRMI");
+         
+         this.setVisible(false);
+         loginWindow = new LoginWindow(serverRMI);
+         loginWindow.setVisible(true);
       } catch (Exception e) {
          System.out.println(e);
       }
@@ -127,7 +142,16 @@ public class ConnectToServerWindow extends javax.swing.JFrame {
    private javax.swing.JTextField jTextFieldServerName;
    // End of variables declaration//GEN-END:variables
 
-   private String getServerAddress() {
-      throw new UnsupportedOperationException("Not yet implemented");
+   private String getServerAddress() throws ClassNotFoundException, SQLException, UnknownHostException {
+        Class.forName("com.mysql.jdbc.Driver");
+        connection = DriverManager.getConnection(database.url());
+        statement = connection.createStatement();
+        System.out.println(jTextFieldServerName.getText());
+        String query = "select * from serverTable where name='" + jTextFieldServerName.getText() + "' and !(address is null or address is NULL or address=0 or address='')";
+        resultSet = statement.executeQuery(query);
+        if (resultSet.next()) {
+            return resultSet.getNString("address");
+        } 
+        return null;
    }
 }
