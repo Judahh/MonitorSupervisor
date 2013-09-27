@@ -79,6 +79,11 @@ public class MainWindow extends javax.swing.JFrame {
       jTextFieldServerName = new javax.swing.JTextField();
 
       setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+      addWindowListener(new java.awt.event.WindowAdapter() {
+         public void windowClosing(java.awt.event.WindowEvent evt) {
+            formWindowClosing(evt);
+         }
+      });
 
       jLabel1.setText("Name:");
 
@@ -170,6 +175,14 @@ public class MainWindow extends javax.swing.JFrame {
          Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
       }
     }//GEN-LAST:event_jButtonSendChagesActionPerformed
+
+   private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+      try {
+         serverRMI.logoff(username);
+      } catch (RemoteException ex) {
+         Logger.getLogger(MainWindow.class.getName()).log(Level.SEVERE, null, ex);
+      }
+   }//GEN-LAST:event_formWindowClosing
    /**
     * @param args the command line arguments
     */
