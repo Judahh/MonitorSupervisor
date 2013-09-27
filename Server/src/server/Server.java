@@ -68,7 +68,7 @@ public class Server extends UnicastRemoteObject implements ServerRMI {
          System.out.println(query);
          resultSet = statement.executeQuery(query);
          if (resultSet.next()) {
-            query = "UPDATE clientTable SET `address`='" + address + "' and `number`='" + number + "' and `currentNumber`='" + currentNumber + "' WHERE `name`='" + username + "'";
+            query = "UPDATE clientTable SET `address`='" + address + "', `number`='" + number + "', `currentNumber`='" + currentNumber + "' WHERE `name`='" + username + "'";
             System.out.println(query);
             statement.executeUpdate(query);
             mainWindow.setElement(username, number, currentNumber);
