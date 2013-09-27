@@ -118,7 +118,7 @@ public class StartServerWindow extends javax.swing.JFrame {
              JOptionPane.showMessageDialog(null, "Register OK!");
           }
        } catch (Exception e) {
-          //erro ao se registrar
+          JOptionPane.showMessageDialog(null, "Register error!");
           System.out.println(e);
        }
     }//GEN-LAST:event_jButtonRegisterActionPerformed
