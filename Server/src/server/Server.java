@@ -138,13 +138,13 @@ public class Server extends UnicastRemoteObject implements ServerRMI {
          String query = "select * from clientTable where name='" + oldUsername + "'";
          resultSet = statement.executeQuery(query);
          if (resultSet.next()) {
-            return false;
-         } else {
-            query = "UPDATE clientTable SET `name`='" + username + "', `number`='" + number + "', `currentNumber`='" + currentNumber + "', `nameServer`='" + nameServer + "' WHERE `name`='" + oldUsername + "'";
+            query = "UPDATE clientTable SET `name`='" + username + "', `number`='" + number + "', `currentNumber`='" + currentNumber + "', `serverName`='" + nameServer + "' WHERE `name`='" + oldUsername + "'";
             System.out.println(query);
             statement.executeUpdate(query);
-            mainWindow.registerElement(username);
+            mainWindow.resetElement(oldUsername,username,number,currentNumber);
             return true;
+         } else {
+            return false;
          }
       } catch (Exception e) {
          System.out.println(e);

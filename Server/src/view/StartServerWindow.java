@@ -129,18 +129,18 @@ public class StartServerWindow extends javax.swing.JFrame {
           connection = DriverManager.getConnection(database.url());
           statement = connection.createStatement();
           System.out.println(jTextFieldServerName.getText());
-          String query = "select * from serverTable where name='" + jTextFieldServerName.getText() + "' and !(address is null or address is NULL or address=0 or address='')";
+          String query = "select * from serverTable where name='" + jTextFieldServerName.getText() + "'";
           resultSet = statement.executeQuery(query);
           if (resultSet.next()) {
-             JOptionPane.showMessageDialog(null, "Login error!");
-          } else {
-             query = "UPDATE clientTable SET `address`='" + Inet4Address.getLocalHost().getHostAddress().toString() + "' WHERE `name`='" + jTextFieldServerName.getText() + "'";
+             query = "UPDATE serverTable SET address='" + Inet4Address.getLocalHost().getHostAddress().toString() + "' WHERE name='" + jTextFieldServerName.getText() + "'";
              System.out.println(query);
              statement.executeUpdate(query);
              //proxima tela
              this.setVisible(false);
              mainWindow = new MainWindow(jTextFieldServerName.getText());
              mainWindow.setVisible(true);
+          } else {
+             JOptionPane.showMessageDialog(null, "Login error!");
           }
        } catch (Exception e) {
           JOptionPane.showMessageDialog(null, "Login error!");

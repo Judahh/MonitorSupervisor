@@ -138,6 +138,16 @@ public class MainWindow extends javax.swing.JFrame {
       }
    }
 
+   public void resetElement(String oldUsername, String username, int number, int currentNumber) {
+      for (int index = 0; index < modelList.size(); index++) {
+         String temp=modelList.getElementAt(index).toString().split("-")[0];
+         if(oldUsername.equals(temp)){
+            modelList.setElementAt(username+"-"+Integer.toString(currentNumber)+" of "+Integer.toString(number), index);
+            break;
+         }
+      }
+   }
+   
    public void logoffElement(String username) {
       for (int index = 0; index < modelList.size(); index++) {
          String temp=modelList.getElementAt(index).toString().split("-")[0];

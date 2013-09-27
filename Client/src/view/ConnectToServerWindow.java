@@ -14,6 +14,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 import rmi.ServerRMI;
@@ -106,7 +107,7 @@ public class ConnectToServerWindow extends javax.swing.JFrame {
          loginWindow.setVisible(true);
       } catch (Exception e) {
          JOptionPane.showMessageDialog(null, "Connect error!");
-         System.out.println(e);
+         e.printStackTrace();
       }
    }//GEN-LAST:event_jButtonConnectActionPerformed
 
@@ -153,7 +154,7 @@ public class ConnectToServerWindow extends javax.swing.JFrame {
       String query = "select * from serverTable where name='" + jTextFieldServerName.getText() + "' and !(address is null or address is NULL or address=0 or address='')";
       resultSet = statement.executeQuery(query);
       if (resultSet.next()) {
-         return resultSet.getNString("address");
+         return resultSet.getString("address");
       }
       return null;
    }
