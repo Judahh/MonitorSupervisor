@@ -10,6 +10,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import javax.swing.JOptionPane;
 import javax.swing.UIManager;
 
 /**
@@ -17,19 +18,19 @@ import javax.swing.UIManager;
  * @author JH
  */
 public class StartServerWindow extends javax.swing.JFrame {
-   
+
    private Database database;
    private Connection connection = null;
    private Statement statement = null;
    private ResultSet resultSet = null;
-    private MainWindow mainWindow;
-   
+   private MainWindow mainWindow;
+
    /**
     * Creates new form StartServerWindow
     */
    public StartServerWindow() {
       initComponents();
-      this.database=new Database();
+      this.database = new Database();
    }
 
    /**
@@ -101,51 +102,50 @@ public class StartServerWindow extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegisterActionPerformed
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(database.url());
-            statement = connection.createStatement();
-            System.out.println(jTextFieldServerName.getText());
-            String query = "select * from serverTable where name='" + jTextFieldServerName.getText() + "'";
-            resultSet = statement.executeQuery(query);
-            if (resultSet.next()) {
-                //erro ao se registrar
-            } else {
-               query = "INSERT INTO serverTable (`name`) VALUES ('" + jTextFieldServerName.getText() + "');";
-               System.out.println(query);
-               statement.executeUpdate(query);
-               //ok
-            }
-        } catch (Exception e) {
-            //erro ao se registrar
-            System.out.println(e);
-        }
+       try {
+          Class.forName("com.mysql.jdbc.Driver");
+          connection = DriverManager.getConnection(database.url());
+          statement = connection.createStatement();
+          System.out.println(jTextFieldServerName.getText());
+          String query = "select * from serverTable where name='" + jTextFieldServerName.getText() + "'";
+          resultSet = statement.executeQuery(query);
+          if (resultSet.next()) {
+             JOptionPane.showMessageDialog(null, "Register error!");
+          } else {
+             query = "INSERT INTO serverTable (`name`) VALUES ('" + jTextFieldServerName.getText() + "');";
+             System.out.println(query);
+             statement.executeUpdate(query);
+             JOptionPane.showMessageDialog(null, "Register OK!");
+          }
+       } catch (Exception e) {
+          //erro ao se registrar
+          System.out.println(e);
+       }
     }//GEN-LAST:event_jButtonRegisterActionPerformed
 
     private void jButtonStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonStartActionPerformed
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection(database.url());
-            statement = connection.createStatement();
-            System.out.println(jTextFieldServerName.getText());
-            String query = "select * from serverTable where name='" + jTextFieldServerName.getText() + "' and !(address is null or address is NULL or address=0 or address='')";
-            resultSet = statement.executeQuery(query);
-            if (resultSet.next()) {
-                //erro ao se logar
-                System.out.println("tem");
-            } else {
-               query = "UPDATE clientTable SET `address`='" + Inet4Address.getLocalHost().getHostAddress().toString() + "' WHERE `name`='" + jTextFieldServerName.getText() + "'";
-               System.out.println(query);
-               statement.executeUpdate(query);
-               //proxima tela
-               this.setVisible(false);
-               mainWindow = new MainWindow(jTextFieldServerName.getText());
-               mainWindow.setVisible(true);
-            }
-        } catch (Exception e) {
-            //erro ao se logar
-            System.out.println(e);
-        }
+       try {
+          Class.forName("com.mysql.jdbc.Driver");
+          connection = DriverManager.getConnection(database.url());
+          statement = connection.createStatement();
+          System.out.println(jTextFieldServerName.getText());
+          String query = "select * from serverTable where name='" + jTextFieldServerName.getText() + "' and !(address is null or address is NULL or address=0 or address='')";
+          resultSet = statement.executeQuery(query);
+          if (resultSet.next()) {
+             JOptionPane.showMessageDialog(null, "Login error!");
+          } else {
+             query = "UPDATE clientTable SET `address`='" + Inet4Address.getLocalHost().getHostAddress().toString() + "' WHERE `name`='" + jTextFieldServerName.getText() + "'";
+             System.out.println(query);
+             statement.executeUpdate(query);
+             //proxima tela
+             this.setVisible(false);
+             mainWindow = new MainWindow(jTextFieldServerName.getText());
+             mainWindow.setVisible(true);
+          }
+       } catch (Exception e) {
+          JOptionPane.showMessageDialog(null, "Login error!");
+          System.out.println(e);
+       }
     }//GEN-LAST:event_jButtonStartActionPerformed
 
    /**

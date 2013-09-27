@@ -23,18 +23,20 @@ import rmi.ServerRMI;
  * @author JH
  */
 public class ConnectToServerWindow extends javax.swing.JFrame {
+
    private ServerRMI serverRMI;
    private Database database;
    private Connection connection = null;
    private Statement statement = null;
    private ResultSet resultSet = null;
-    private LoginWindow loginWindow;
+   private LoginWindow loginWindow;
+
    /**
     * Creates new form ConnectToServerWindow
     */
    public ConnectToServerWindow() {
       initComponents();
-      this.database=new Database();
+      this.database = new Database();
    }
 
    /**
@@ -98,11 +100,12 @@ public class ConnectToServerWindow extends javax.swing.JFrame {
       try {
          Registry registry = LocateRegistry.getRegistry(getServerAddress(), 9000);
          serverRMI = (ServerRMI) registry.lookup("ServerRMI");
-         
+
          this.setVisible(false);
-         loginWindow = new LoginWindow(serverRMI);
+         loginWindow = new LoginWindow(serverRMI, jTextFieldServerName.getText());
          loginWindow.setVisible(true);
       } catch (Exception e) {
+         JOptionPane.showMessageDialog(null, "Connect error!");
          System.out.println(e);
       }
    }//GEN-LAST:event_jButtonConnectActionPerformed
@@ -143,15 +146,15 @@ public class ConnectToServerWindow extends javax.swing.JFrame {
    // End of variables declaration//GEN-END:variables
 
    private String getServerAddress() throws ClassNotFoundException, SQLException, UnknownHostException {
-        Class.forName("com.mysql.jdbc.Driver");
-        connection = DriverManager.getConnection(database.url());
-        statement = connection.createStatement();
-        System.out.println(jTextFieldServerName.getText());
-        String query = "select * from serverTable where name='" + jTextFieldServerName.getText() + "' and !(address is null or address is NULL or address=0 or address='')";
-        resultSet = statement.executeQuery(query);
-        if (resultSet.next()) {
-            return resultSet.getNString("address");
-        } 
-        return null;
+      Class.forName("com.mysql.jdbc.Driver");
+      connection = DriverManager.getConnection(database.url());
+      statement = connection.createStatement();
+      System.out.println(jTextFieldServerName.getText());
+      String query = "select * from serverTable where name='" + jTextFieldServerName.getText() + "' and !(address is null or address is NULL or address=0 or address='')";
+      resultSet = statement.executeQuery(query);
+      if (resultSet.next()) {
+         return resultSet.getNString("address");
+      }
+      return null;
    }
 }

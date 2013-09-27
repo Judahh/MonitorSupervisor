@@ -10,6 +10,7 @@ import java.net.UnknownHostException;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import rmi.ServerRMI;
 
 /**
@@ -17,14 +18,18 @@ import rmi.ServerRMI;
  * @author JH
  */
 public class LoginWindow extends javax.swing.JFrame {
+
    private ServerRMI serverRMI;
-    private MainWindow mainWindow;
+   private MainWindow mainWindow;
+   private String serverName;
+
    /**
     * Creates new form LoginWindow
     */
-   public LoginWindow(ServerRMI serverRMI) {
+   public LoginWindow(ServerRMI serverRMI, String serverName) {
       initComponents();
-      this.serverRMI=serverRMI;
+      this.serverName=serverName;
+      this.serverRMI = serverRMI;
    }
 
    /**
@@ -111,33 +116,38 @@ public class LoginWindow extends javax.swing.JFrame {
 
     private void jButtonRegisterActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRegisterActionPerformed
        try {
-           if(this.serverRMI.register(jTextFieldName.getText(), Integer.parseInt(jTextFieldNumber.getText()), GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length)){
-               
-           }
+          if (this.serverRMI.register(jTextFieldName.getText(), Integer.parseInt(jTextFieldNumber.getText()), GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length)) {
+             JOptionPane.showMessageDialog(null, "Register Ok!");
+          } else {
+             JOptionPane.showMessageDialog(null, "Register Error!");
+          }
        } catch (RemoteException ex) {
-           Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
+          JOptionPane.showMessageDialog(null, "Register Error!");
+          Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
        }
     }//GEN-LAST:event_jButtonRegisterActionPerformed
 
     private void jButtonLoginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonLoginActionPerformed
-        try {
-           if(this.serverRMI.login(jTextFieldName.getText(), Integer.parseInt(jTextFieldNumber.getText()), GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length, Inet4Address.getLocalHost().getHostAddress().toString())){
-               
-               this.setVisible(false);
-               mainWindow = new MainWindow(serverRMI ,jTextFieldName.getText());
-               mainWindow.setVisible(true);
-           }
+       try {
+          if (this.serverRMI.login(jTextFieldName.getText(), Integer.parseInt(jTextFieldNumber.getText()), GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices().length, Inet4Address.getLocalHost().getHostAddress().toString())) {
+
+             this.setVisible(false);
+             mainWindow = new MainWindow(serverRMI, jTextFieldName.getText(), Integer.parseInt(jTextFieldNumber.getText()), serverName);
+             mainWindow.setVisible(true);
+          }else{
+             JOptionPane.showMessageDialog(null, "Login Error!");
+          }
        } catch (RemoteException ex) {
-           Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
+          JOptionPane.showMessageDialog(null, "Login Error!");
+          Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
        } catch (UnknownHostException ex) {
-           Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
+          JOptionPane.showMessageDialog(null, "Login Error!");
+          Logger.getLogger(LoginWindow.class.getName()).log(Level.SEVERE, null, ex);
        }
     }//GEN-LAST:event_jButtonLoginActionPerformed
-
    /**
     * @param args the command line arguments
     */
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonLogin;
     private javax.swing.JButton jButtonRegister;

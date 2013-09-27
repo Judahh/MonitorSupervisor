@@ -14,12 +14,13 @@ import server.Server;
  * @author JH
  */
 public class MainWindow extends javax.swing.JFrame {
+
    private String serverName;
    private Server server;
+
    /**
     * Creates new form MainWindow
     */
-   
    public MainWindow(String serverName) throws RemoteException {
       initComponents();
       this.serverName = serverName;
@@ -82,11 +83,9 @@ public class MainWindow extends javax.swing.JFrame {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
    /**
     * @param args the command line arguments
     */
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JLabel jLabel1;
     private javax.swing.JList jList;
